@@ -1,5 +1,4 @@
 import yaml_loader as yl
-import ez_version as v
 
 
 def dictobj(name, value):
@@ -13,7 +12,6 @@ class Skin:
     #            (Korean)
 
     def __init__(self):
-
         # Initialize
         self.name = ""
         self.resource = ""
@@ -27,8 +25,7 @@ class Skin:
         self.drawing = []
         self.input_mode = []
 
-    def load(self, yamlfile):
-
+    def importYAML(self, yamlfile):
         # Check type
         if not isinstance(yamlfile, yl.YAMLFile):
             raise TypeError
@@ -40,11 +37,13 @@ class Skin:
 
         # Load numbers of frames and framerates
         for value_name in yamlfile.frame:
-            obj_name = value_name.split('-')[0]
+            obj_name = value_name.replace('-', '_')
             if value_name.endswith("framerate"):
+                obj_name = obj_name.replace('_framerate', '')
                 self.framerate.append(dictobj(obj_name,
                                               yamlfile.frame[value_name]))
             elif value_name.endswith("frame"):
+                obj_name = obj_name.replace('_frame', '')
                 self.frame.append(dictobj(obj_name,
                                           yamlfile.frame[value_name]))
 
@@ -61,7 +60,7 @@ class Skin:
                 self.color.append(dictobj(value_name.replace('-', '_'),
                                           yamlfile.paint[value_name]))
 
-        # Load Styles(function)
+        # Load styles in playing (function)
         for value_name in yamlfile.function:
             # Render order(pipeline)
             if value_name == "pipeline":
@@ -84,13 +83,40 @@ class Skin:
                 self.input_mode.append({"mode": mode_num,
                                         "target": order_num})
 
+    def exportYAML(self):
+        # Header
+        header = {"zip": self.resource, "lua": self.luafile}
+
+        # Frames and framerates
+        # Initialize for frames and framerates list
+        frame = {}
+
+        # Frames
+        for eatch_object in self.frame:
+            key_name = eatch_object["name"] + "-frame".replace('_', '-')
+            frame[key_name] = eatch_object["value"]
+
+        # Framerates
+        for eatch_object in self.framerate:
+            key_name = eatch_object["name"] + "-framerate".replace('_', '-')
+            frame[key_name] = eatch_object["value"]
+
+        # Paint
+        # Initialize for paint list
+        paint = {}
+
+        # For debug
+        print(header)
+        print(frame)
+
 
 # For test
 if __name__ == '__main__':
-    example_file_path = "your_yaml_file_path"
-    file_object = yl.YAMLFile(example_file_path)
+    example_file_path = "Default.yaml"
+    file_object = yl.YAMLFile()
+    file_object.road(example_file_path)
     example_skin = Skin()
-    example_skin.load(file_object)
+    example_skin.importYAML(file_object)
 
     # Debug Data
     print("Name:", example_skin.name)
@@ -117,3 +143,7 @@ if __name__ == '__main__':
     print("")
     print("Key Sets")
     print(example_skin.drawing)
+    print("")
+    print("")
+    print("Exporting...")
+    example_skin.exportYAML()
