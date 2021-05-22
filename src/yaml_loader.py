@@ -31,7 +31,10 @@ class YAMLFile():
         self.frame = data["frame"]
         self.paint = data["paint"]
         self.function = data["function"]
-        self.font = data["font"]
+        try:
+            self.font = data["font"]
+        except KeyError:
+            self.font = dict()
 
         # Delete raw YAML data
         del data

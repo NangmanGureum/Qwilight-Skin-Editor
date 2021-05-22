@@ -21,8 +21,7 @@ class Skin:
         self.frame = []
         self.framerate = []
         self.color = []
-        self.render_order = []
-        self.style = []
+        self.pipeline = []
         self.drawing = []
         self.input_mode = []
         self.function = []
@@ -42,7 +41,7 @@ class Skin:
                 "length": yamlfile.header["default-length"],
                 "height": yamlfile.header["default-height"]
             }
-        except IndexError:
+        except KeyError:
             self.default_size = {
                 "length": 1280,
                 "height": 720
@@ -70,9 +69,13 @@ class Skin:
             # Render order(pipeline)
             if value_name.endswith("pipeline"):
                 pipelines_str = str(yamlfile.function[value_name])
+                pipelines_list = []
                 for obj_num in pipelines_str.split(","):
-                    self.render_order.append(int(obj_num))
+                    pipelines_list.append(int(obj_num))
                 del pipelines_str
+                self.pipeline.append(
+                    dictobj(value_name.replace('-', '_'), pipelines_list))
+                del pipelines_list
 
             # Key style number configure
             elif value_name.startswith("ui-drawing-"):
@@ -121,32 +124,40 @@ class Skin:
 
         # Frames
         for eatch_object in self.frame:
-            key_name = eatch_object["name"] + "-frame".replace('_', '-')
+            key_name = (eatch_object["name"] + "-frame").replace('_', '-')
             frame[key_name] = eatch_object["value"]
 
         # Framerates
         for eatch_object in self.framerate:
-            key_name = eatch_object["name"] + "-framerate".replace('_', '-')
+            key_name = (eatch_object["name"] + "-framerate").replace('_', '-')
             frame[key_name] = eatch_object["value"]
 
         # Paint
         # Initialize for paint list
         paint = {}
 
+        # asdf
+        for eatch_object in self.color:
+            key_name = eatch_object["name"].replace('_', '-')
+            paint[key_name] = eatch_object["value"]
+
         # For debug
         print(header)
         print(frame)
+        print(paint)
 
 
 # For test
 if __name__ == '__main__':
-    example_file_path = "Default.yaml"
+    # example_file_path = "Default.yaml"
+    example_file_path = "../CRs_simple_skin_1.6/CR_simple.yaml"
     file_object = yl.YAMLFile()
     file_object.road(example_file_path)
     example_skin = Skin()
     example_skin.importYAML(file_object)
 
     # Debug Data
+    print("="*20)
     print("Name:", example_skin.name)
     print("Resouse Zip:", example_skin.resource)
     print("Lua Script:", example_skin.luafile)
@@ -161,16 +172,16 @@ if __name__ == '__main__':
     print(example_skin.color)
     print("")
     print("Pipeline")
-    print(example_skin.render_order)
-    print("")
-    print("Style")
-    print(example_skin.style)
+    print(example_skin.pipeline)
     print("")
     print("Drawing")
     print(example_skin.drawing)
     print("")
     print("Key Sets")
     print(example_skin.drawing)
+    print("")
+    print("Functions")
+    print(example_skin.function)
     print("")
     print("")
     print("Exporting...")

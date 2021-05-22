@@ -2,3 +2,4 @@ Python Modules
 
 1. PyYaml (The parser of YAML)
 2. lupa (Lua Interpriter)
+3. Kivy (for GUI Interface)
