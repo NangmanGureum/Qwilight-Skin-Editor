@@ -16,6 +16,7 @@ class Skin:
         self.name = ""
         self.resource = ""
         self.luafile = ""
+        self.default_size = dict()
 
         self.frame = []
         self.framerate = []
@@ -24,6 +25,8 @@ class Skin:
         self.style = []
         self.drawing = []
         self.input_mode = []
+        self.function = []
+        self.font = []
 
     def importYAML(self, yamlfile):
         # Check type
@@ -34,6 +37,16 @@ class Skin:
         self.name = yamlfile.file_name
         self.resource = yamlfile.header["zip"]
         self.luafile = yamlfile.header["lua"]
+        try:
+            self.default_size = {
+                "length": yamlfile.header["default-length"],
+                "height": yamlfile.header["default-height"]
+            }
+        except IndexError:
+            self.default_size = {
+                "length": 1280,
+                "height": 720
+            }
 
         # Load numbers of frames and framerates
         for value_name in yamlfile.frame:
@@ -47,27 +60,19 @@ class Skin:
                 self.frame.append(dictobj(obj_name,
                                           yamlfile.frame[value_name]))
 
-        # Load result rank color
+        # Load colors (paint)
         for value_name in yamlfile.paint:
-            if value_name.startswith("quit-"):
-                ranks = ('x', 'u', 's', 'a', 'b', 'c', 'd')
-                rank_number = int(value_name.split('-')[-1])
-
-                self.color.append(dictobj("rank_%s" % ranks[rank_number],
-                                          yamlfile.paint[value_name]))
-
-            else:
-                self.color.append(dictobj(value_name.replace('-', '_'),
-                                          yamlfile.paint[value_name]))
+            self.color.append(dictobj(value_name.replace('-', '_'),
+                                      yamlfile.paint[value_name]))
 
         # Load styles in playing (function)
         for value_name in yamlfile.function:
             # Render order(pipeline)
-            if value_name == "pipeline":
-                pipeline_str = str(yamlfile.function["pipeline"])
-                for obj_num in pipeline_str.split(","):
+            if value_name.endswith("pipeline"):
+                pipelines_str = str(yamlfile.function[value_name])
+                for obj_num in pipelines_str.split(","):
                     self.render_order.append(int(obj_num))
-                del pipeline_str
+                del pipelines_str
 
             # Key style number configure
             elif value_name.startswith("ui-drawing-"):
@@ -82,6 +87,29 @@ class Skin:
                 order_num = str(yamlfile.function[value_name]).split(",")
                 self.input_mode.append({"mode": mode_num,
                                         "target": order_num})
+
+            else:
+                value = yamlfile.function[value_name]
+                try:
+                    int(value)
+                except ValueError:
+                    pass
+                else:
+                    value = int(value)
+
+                try:
+                    float(value)
+                except ValueError:
+                    pass
+                else:
+                    value = float(value)
+                self.function.append(dictobj(value_name.replace('-', '_'),
+                                             yamlfile.function[value_name]))
+
+        # Load styles in playing (function)
+        for value_name in yamlfile.font:
+            self.font.append(dictobj(value_name.replace('-', '_'),
+                                     yamlfile.font[value_name]))
 
     def exportYAML(self):
         # Header
