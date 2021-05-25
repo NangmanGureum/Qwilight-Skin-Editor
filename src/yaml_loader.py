@@ -13,7 +13,7 @@ class YAMLFile():
         self.function = {}
         self.font = {}
 
-    def road(self, file_name):
+    def load(self, file_name):
         # Open YAML file
         yaml_file = open(file_name, 'r', encoding='UTF8')
 

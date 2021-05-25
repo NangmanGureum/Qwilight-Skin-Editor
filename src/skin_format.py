@@ -16,7 +16,8 @@ class Skin:
         self.name = ""
         self.resource = ""
         self.luafile = ""
-        self.default_size = dict()
+        self.skin_size = dict()
+        self.skin_size_blank = False
 
         self.frame = []
         self.framerate = []
@@ -37,15 +38,16 @@ class Skin:
         self.resource = yamlfile.header["zip"]
         self.luafile = yamlfile.header["lua"]
         try:
-            self.default_size = {
+            self.skin_size = {
                 "length": yamlfile.header["default-length"],
                 "height": yamlfile.header["default-height"]
             }
         except KeyError:
-            self.default_size = {
+            self.skin_size = {
                 "length": 1280,
                 "height": 720
             }
+            self.skin_size_blank = True
 
         # Load numbers of frames and framerates
         for value_name in yamlfile.frame:
@@ -117,6 +119,9 @@ class Skin:
     def exportYAML(self):
         # Header
         header = {"zip": self.resource, "lua": self.luafile}
+        if not self.skin_size_blank:
+            header["default-length"] = self.skin_size["length"]
+            header["default-height"] = self.skin_size["height"]
 
         # Frames and framerates
         # Initialize for frames and framerates list
@@ -136,10 +141,14 @@ class Skin:
         # Initialize for paint list
         paint = {}
 
-        # asdf
+        # From color to YAML Paint
         for eatch_object in self.color:
             key_name = eatch_object["name"].replace('_', '-')
             paint[key_name] = eatch_object["value"]
+
+        # Function
+        # Initialize for style(function) list
+        skin_func = {}
 
         # For debug
         print(header)
@@ -149,17 +158,16 @@ class Skin:
 
 # For test
 if __name__ == '__main__':
-    # example_file_path = "Default.yaml"
-    example_file_path = "../CRs_simple_skin_1.6/CR_simple.yaml"
+    example_file_path = "../skin/Default.yaml"
     file_object = yl.YAMLFile()
-    file_object.road(example_file_path)
+    file_object.load(example_file_path)
     example_skin = Skin()
     example_skin.importYAML(file_object)
 
     # Debug Data
     print("="*20)
     print("Name:", example_skin.name)
-    print("Resouse Zip:", example_skin.resource)
+    print("Resource Zip:", example_skin.resource)
     print("Lua Script:", example_skin.luafile)
     print("")
     print("Frames of each objects")
