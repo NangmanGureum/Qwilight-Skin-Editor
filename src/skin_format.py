@@ -1,3 +1,4 @@
+from os import pipe
 import yaml_loader as yl
 
 
@@ -150,10 +151,19 @@ class Skin:
         # Initialize for style(function) list
         skin_func = {}
 
+        for eatch_object in self.function:
+            key_name = eatch_object["name"].replace('_', '-')
+            skin_func[key_name] = eatch_object["value"]
+
+        for eatch_object in self.pipeline:
+            skin_func[eatch_object["name"]] = ','.join(
+                str(e) for e in eatch_object["value"])
+
         # For debug
         print(header)
         print(frame)
         print(paint)
+        print(skin_func)
 
 
 # For test

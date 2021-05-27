@@ -12,3 +12,4 @@ This is WYSIWYG skin editor for Qwilight
 ### Todo
 
 - Make file maneger
+- Make image processor
