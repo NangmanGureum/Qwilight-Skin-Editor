@@ -1,5 +1,5 @@
 from os import pipe
-import yaml_loader as yl
+import file_loader as yl
 
 
 def dictobj(name, value):
@@ -112,40 +112,40 @@ class Skin:
                 self.function.append(dictobj(value_name.replace('-', '_'),
                                              yamlfile.function[value_name]))
 
-        # Load styles in playing (function)
+        # Load font size(font)
         for value_name in yamlfile.font:
             self.font.append(dictobj(value_name.replace('-', '_'),
                                      yamlfile.font[value_name]))
 
     def exportYAML(self):
         # Header
-        header = {"zip": self.resource, "lua": self.luafile}
+        skin_header = {"zip": self.resource, "lua": self.luafile}
         if not self.skin_size_blank:
-            header["default-length"] = self.skin_size["length"]
-            header["default-height"] = self.skin_size["height"]
+            skin_header["default-length"] = self.skin_size["length"]
+            skin_header["default-height"] = self.skin_size["height"]
 
         # Frames and framerates
         # Initialize for frames and framerates list
-        frame = {}
+        skin_frame = {}
 
         # Frames
         for eatch_object in self.frame:
             key_name = (eatch_object["name"] + "-frame").replace('_', '-')
-            frame[key_name] = eatch_object["value"]
+            skin_frame[key_name] = eatch_object["value"]
 
         # Framerates
         for eatch_object in self.framerate:
             key_name = (eatch_object["name"] + "-framerate").replace('_', '-')
-            frame[key_name] = eatch_object["value"]
+            skin_frame[key_name] = eatch_object["value"]
 
         # Paint
         # Initialize for paint list
-        paint = {}
+        skin_paint = {}
 
         # From color to YAML Paint
         for eatch_object in self.color:
             key_name = eatch_object["name"].replace('_', '-')
-            paint[key_name] = eatch_object["value"]
+            skin_paint[key_name] = eatch_object["value"]
 
         # Function
         # Initialize for style(function) list
@@ -159,11 +159,37 @@ class Skin:
             skin_func[eatch_object["name"]] = ','.join(
                 str(e) for e in eatch_object["value"])
 
-        # For debug
-        print(header)
-        print(frame)
-        print(paint)
-        print(skin_func)
+        for eatch_object in self.input_mode:
+            key_name = "ui-input-mode-" + str(eatch_object["mode"])
+            key_value = ','.join(str(e) for e in eatch_object["target"])
+            skin_func[key_name] = key_value
+
+        for eatch_object in self.drawing:
+            key_name = "ui-drawing-" + str(eatch_object["num"])
+            key_value = ','.join(str(e) for e in eatch_object["target"])
+            if key_value == "None":
+                key_value = ""
+            skin_func[key_name] = key_value
+
+        # Font
+        # Initialize for font list
+        skin_font = {}
+
+        # From color to YAML Font
+        for eatch_object in self.font:
+            key_name = eatch_object["name"].replace('_', '-')
+            skin_font[key_name] = eatch_object["value"]
+
+        # Final Join
+        YAML_final = {
+            "format": skin_header,
+            "frame": skin_frame,
+            "paint": skin_paint,
+            "function": skin_func,
+            "font": skin_font
+        }
+
+        return YAML_final
 
 
 # For test
@@ -203,4 +229,4 @@ if __name__ == '__main__':
     print("")
     print("")
     print("Exporting...")
-    example_skin.exportYAML()
+    print(example_skin.exportYAML())
