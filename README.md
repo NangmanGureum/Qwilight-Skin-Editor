@@ -14,3 +14,4 @@ This is WYSIWYG skin editor for Qwilight
 - Make file maneger
 - Make image processor
 - Make lua loader
+- Reform the format and file loader

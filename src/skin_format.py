@@ -1,4 +1,5 @@
 from os import pipe
+import json
 import file_loader as yl
 
 
@@ -13,13 +14,24 @@ class Skin:
     #            (Korean)
 
     def __init__(self):
-        # Initialize
+
+        # Metadata for Editor
         self.name = ""
+        self.description = ""
+        self.author = ""
+        self.start_date = ""
+        self.final_date = ""
+
+        # Paths
+        self.dir_resource = ""
+
+        # Initialize
         self.resource = ""
-        self.luafile = ""
+        self.lua_script = ""
         self.skin_size = dict()
         self.skin_size_blank = False
 
+        # Skin Data
         self.frame = []
         self.framerate = []
         self.color = []
@@ -29,7 +41,45 @@ class Skin:
         self.function = []
         self.font = []
 
-    def importYAML(self, yamlfile):
+    def export_json(self):
+        json_data = {
+            "metadata": {
+                "name": self.name,
+                "description": self.description,
+                "author": self.author,
+                "start_date": self.start_date,
+                "final_date": self.final_date,
+            },
+
+            "paths": {
+                "dir_resource": self.dir_resource
+            },
+
+            "skin_data": {
+                "header": {
+                    "resource": self.resource,
+                    "lua_script": self.lua_script,
+                    "skin_size": None
+                },
+                "frame": self.frame,
+                "framerate": self.framerate,
+                "color": self.color,
+                "pipeline": self.pipeline,
+                "drawing": self.drawing,
+                "input_mode": self.input_mode,
+                "function": self.function,
+                "font": self.font
+            }
+        }
+
+        if not self.skin_size_blank:
+            json_data["skin_data"]["header"]["skin_size"] = self.skin_size
+
+        json_str = json.dumps(json_data, indent=4, ensure_ascii=False)
+
+        return json_str
+
+    def import_yaml(self, yamlfile):
         # Check type
         if not isinstance(yamlfile, yl.YAMLFile):
             raise TypeError
@@ -117,7 +167,7 @@ class Skin:
             self.font.append(dictobj(value_name.replace('-', '_'),
                                      yamlfile.font[value_name]))
 
-    def exportYAML(self):
+    def export_yaml(self):
         # Header
         skin_header = {"zip": self.resource, "lua": self.luafile}
         if not self.skin_size_blank:
@@ -186,7 +236,15 @@ class Skin:
             "frame": skin_frame,
             "paint": skin_paint,
             "function": skin_func,
-            "font": skin_font
+            "font": skin_font,
+
+            "--editor__metadata": {
+                "name": self.name,
+                "description": self.description,
+                "author": self.author,
+                "start_date": self.start_date,
+                "final_date": self.final_date
+            }
         }
 
         return YAML_final
@@ -198,7 +256,7 @@ if __name__ == '__main__':
     file_object = yl.YAMLFile()
     file_object.load(example_file_path)
     example_skin = Skin()
-    example_skin.importYAML(file_object)
+    example_skin.import_yaml(file_object)
 
     # Debug Data
     print("="*20)
@@ -229,4 +287,4 @@ if __name__ == '__main__':
     print("")
     print("")
     print("Exporting...")
-    print(example_skin.exportYAML())
+    print(example_skin.export_yaml())
