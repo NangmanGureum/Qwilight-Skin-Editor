@@ -2,6 +2,30 @@ import os
 import yaml
 
 
+class YAMLSkinFile():
+    def __init__(self):
+        pass
+
+    def open(self, file_path):
+        # Open the file
+        self.file = open(file_path, 'r', encoding='UTF8')
+        self.file_name = os.path.basename(self.file.name)
+
+        if self.file_name.startswith("@"):
+            self.for_game = False
+        else:
+            self.for_game = True
+
+        # Read Skin Data
+        self.yaml_data = yaml.load(self.file, Loader=yaml.SafeLoader)
+
+        self.full_info = {
+            "file_name": self.file_name,
+            "for_game": self.for_game,
+            "data": self.yaml_data
+        }
+
+
 class YAMLFile():
     def __init__(self):
         # Initialize
