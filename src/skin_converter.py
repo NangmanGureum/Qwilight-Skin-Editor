@@ -1,3 +1,4 @@
+import zipfile
 import file_loader as fl
 import skin_format as sf
 
@@ -8,7 +9,12 @@ def dictobj(name, value):
             }
 
 
-def to_project(yaml_file: fl.YAMLSkinFile, today: str) -> sf.Skin:
+def resource_unzip(zip_path: str, res_dir_path: str):
+    res_zip = zipfile.ZipFile(zip_path)
+    res_zip.extractall(res_dir_path)
+
+
+def yaml_to_project(yaml_file: fl.YAMLSkinFile, today: str) -> sf.Skin:
     # New Obj
     project = sf.Skin()
 
@@ -20,7 +26,7 @@ def to_project(yaml_file: fl.YAMLSkinFile, today: str) -> sf.Skin:
     try:
         yaml_meta = yaml_data["--editor__metadata"]
     except KeyError:
-        project.name = yaml_info["file_name"]
+        project.name = yaml_info["file_name"].split(".")[0]
         project.description = "Export By The Editor"
         project.author = ""
         project.start_date = today
@@ -32,30 +38,13 @@ def to_project(yaml_file: fl.YAMLSkinFile, today: str) -> sf.Skin:
         project.start_date = yaml_meta["start_date"]
         project.final_date = yaml_meta["final_date"]
 
-    # Skin Object Initialize
-
-    # Skin Header
-    project.resource = ""
-    project.lua_script = ""
-    project.skin_size = dict()
-    project.skin_size_blank = False
-    # Skin Data
-    project.frame = []
-    project.framerate = []
-    project.color = []
-    project.pipeline = []
-    project.drawing = []
-    project.input_mode = []
-    project.function = []
-    project.font = []
-
     # Load header
-    project.resource = yaml_data.header["zip"]
-    project.luafile = yaml_data.header["lua"]
+    project.resource = yaml_data["format"]["zip"]
+    project.luafile = yaml_data["format"]["lua"]
     try:
         project.skin_size = {
-            "length": yaml_data.header["default-length"],
-            "height": yaml_data.header["default-height"]
+            "length": yaml_data["format"]["default-length"],
+            "height": yaml_data["format"]["default-height"]
         }
     except KeyError:
         project.skin_size = {
@@ -64,25 +53,25 @@ def to_project(yaml_file: fl.YAMLSkinFile, today: str) -> sf.Skin:
         }
         project.skin_size_blank = True
     # Load numbers of frames and framerates
-    for value_name in yaml_data.frame:
+    for value_name in yaml_data["frame"]:
         obj_name = value_name.replace('-', '_')
         if value_name.endswith("framerate"):
             obj_name = obj_name.replace('_framerate', '')
             project.framerate.append(dictobj(obj_name,
-                                             yaml_data.frame[value_name]))
+                                             yaml_data["frame"][value_name]))
         elif value_name.endswith("frame"):
             obj_name = obj_name.replace('_frame', '')
             project.frame.append(dictobj(obj_name,
-                                         yaml_data.frame[value_name]))
+                                         yaml_data["frame"][value_name]))
     # Load colors (paint)
-    for value_name in yaml_data.paint:
+    for value_name in yaml_data["paint"]:
         project.color.append(dictobj(value_name.replace('-', '_'),
-                                     yaml_data.paint[value_name]))
+                                     yaml_data["paint"][value_name]))
     # Load styles in playing (function)
-    for value_name in yaml_data.function:
+    for value_name in yaml_data["function"]:
         # Render order(pipeline)
         if value_name.endswith("pipeline"):
-            pipelines_str = str(yaml_data.function[value_name])
+            pipelines_str = str(yaml_data["function"][value_name])
             pipelines_list = []
             for obj_num in pipelines_str.split(","):
                 pipelines_list.append(int(obj_num))
@@ -93,17 +82,17 @@ def to_project(yaml_file: fl.YAMLSkinFile, today: str) -> sf.Skin:
         # Key style number configure
         elif value_name.startswith("ui-drawing-"):
             img_num = int(value_name.split('-')[-1])
-            input_num = str(yaml_data.function[value_name]).split(",")
+            input_num = str(yaml_data["function"][value_name]).split(",")
             project.drawing.append({"num": img_num,
                                     "target": input_num})
         # Order key style by each Key modes
         elif value_name.startswith("ui-input-mode-"):
             mode_num = int(value_name.split('-')[-1])
-            order_num = str(yaml_data.function[value_name]).split(",")
+            order_num = str(yaml_data["function"][value_name]).split(",")
             project.input_mode.append({"mode": mode_num,
                                        "target": order_num})
         else:
-            value = yaml_data.function[value_name]
+            value = yaml_data["function"][value_name]
             try:
                 int(value)
             except ValueError:
@@ -117,8 +106,16 @@ def to_project(yaml_file: fl.YAMLSkinFile, today: str) -> sf.Skin:
             else:
                 value = float(value)
             project.function.append(dictobj(value_name.replace('-', '_'),
-                                            yaml_data.function[value_name]))
+                                            yaml_data["function"][value_name]))
+
     # Load font size(font)
-    for value_name in yaml_data.font:
-        project.font.append(dictobj(value_name.replace('-', '_'),
-                                    yaml_data.font[value_name]))
+    try:
+        yaml_data["font"]
+    except KeyError:
+        pass
+    else:
+        for value_name in yaml_data["font"]:
+            project.font.append(dictobj(value_name.replace('-', '_'),
+                                        yaml_data["font"][value_name]))
+
+    return project

@@ -24,6 +24,7 @@ class Skin:
 
         # Paths
         self.dir_resource = ""
+        self.path_resources = []
 
         # Initialize
         self.resource = ""

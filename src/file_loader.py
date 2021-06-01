@@ -1,4 +1,5 @@
 import os
+import pathlib
 import yaml
 
 
@@ -10,7 +11,16 @@ class YAMLSkinFile():
         # Open the file
         self.file = open(file_path, 'r', encoding='UTF8')
         self.file_name = os.path.basename(self.file.name)
+        self.file_path = os.path.dirname(self.file.name)
 
+        # Windows / Mac
+        os_name = os.uname().sysname
+        if os_name == "Windows":
+            self.file_path += "\\"
+        elif os_name == "Linux" or os_name == "Darwin":
+            self.file_path += "/"
+
+        # Skin type check
         if self.file_name.startswith("@"):
             self.for_game = False
         else:
