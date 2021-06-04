@@ -15,3 +15,4 @@ This is WYSIWYG skin editor for Qwilight
 - Make image processor
 - Make lua loader
 - Reform the format and file loader
+- Write Test Code
