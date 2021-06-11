@@ -25,6 +25,15 @@ def resource_unzip(zip_path: str, res_dir_path: str):
     res_zip.extractall(res_dir_path)
 
 
+def resource_path(path: str, target: str, state: str, frame: int):
+    obj = {
+        "path": path,
+        "target": target,
+        "state": state,
+        "frame": frame
+    }
+
+
 def today_str():
     today_date = datetime.datetime.today()
     today_date_str = today_date.strftime('%Y%m%d')
@@ -86,12 +95,15 @@ def conv_to_project(yaml_path: str, save_path: str):
     resource_unzip(res_zip_path, "%s/%s/Resources" % (save_path, project_name))
 
     # Add Resource files in the object
+    resource_path = {
+
+    }
 
 
 # For test
 if __name__ == '__main__':
     # conv_to_project("../skin/Default.yaml", "../test_skin")
-    conv_to_project("../CRs_simple_skin_1.6/CR_simple.yaml", "../test_skin")
+    conv_to_project("CRs_simple_skin_1.6/CR_simple.yaml", "../test_skin")
 
 """
 if __name__ == '__main__':

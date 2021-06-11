@@ -26,6 +26,16 @@ class Skin:
         self.dir_resource = ""
         self.path_resources = []
 
+        """
+        Path Resource Structure
+
+        "path"(str) - The path of the file
+        "target"(str) - Target object
+        "state"(str) - When to use
+            e. g. idle, press etc...
+        "frame"(int) - A number of frames
+        """
+
         # Initialize
         self.resource = ""
         self.lua_script = ""
