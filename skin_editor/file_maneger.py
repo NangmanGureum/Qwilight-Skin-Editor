@@ -25,13 +25,18 @@ def resource_unzip(zip_path: str, res_dir_path: str):
     res_zip.extractall(res_dir_path)
 
 
-def resource_path(path: str, target: str, state: str, frame: int):
+def resource_path(path: str, target: str, state: str, frame: int = 0):
     obj = {
         "path": path,
         "target": target,
         "state": state,
         "frame": frame
     }
+
+    if not frame == 0:
+        obj["frame"] = frame
+
+    return obj
 
 
 def today_str():
@@ -85,7 +90,8 @@ def conv_to_project(yaml_path: str, save_path: str):
 
     # More data and data to Json
     yaml_project.dir_resource = "./Resources"
-    skin_json = yaml_project.export_json()
+    # skin_json = yaml_project.export_json()
+    skin_json = "wait...."
 
     # Make format file
     new_file("%s/%s/format.json" % (save_path, project_name), skin_json)
@@ -94,16 +100,49 @@ def conv_to_project(yaml_path: str, save_path: str):
     res_zip_path = yaml_file.file_path + yaml_project.resource + ".zip"
     resource_unzip(res_zip_path, "%s/%s/Resources" % (save_path, project_name))
 
-    # Add Resource files in the object
-    resource_path = {
+    # Add Resource files' path in the object
+    res_dir = "%s/%s/%s" % (save_path, project_name, "Resources")
+    res_dir_list = os.listdir(res_dir)
 
-    }
+    # Add resources' path in the skin
+    for dir_name in res_dir_list:
+        dir_path = "%s/%s" % (res_dir, dir_name)
+        dir_files = os.listdir(dir_path)
+
+        for file_name in dir_files:
+            file_path = dir_path + "/" + file_name
+            file_name_wo_extn = file_name.split(".")[0]
+
+            path_in_project = "%s/%s" % (dir_name, file_name)
+
+            if dir_name == "Pause":
+                yaml_project.path_resources.insert(
+                    resource_path(path_in_project, "pause", file_name_wo_extn)
+                )
+            else:
+                file_name_split = file_name_wo_extn.split(" ")
+
+                if file_name_split[0] == "JM":
+                    yaml_project.path_resources.insert(
+                        resource_path(path_in_project,
+                                      "accurate_margin_num", file_name_split[1])
+                    )
+                elif file_name_split[0] == "HC":
+                    yaml_project.path_resources.insert(
+                        resource_path(path_in_project,
+                                      "max_combo_num", file_name_split[1])
+                    )
+                elif file_name_split[0] == "IS":
+                    yaml_project.path_resources.insert(
+                        resource_path(path_in_project,
+                                      "stroke_per_sec_num", file_name_split[1])
+                    )
 
 
 # For test
 if __name__ == '__main__':
     # conv_to_project("../skin/Default.yaml", "../test_skin")
-    conv_to_project("CRs_simple_skin_1.6/CR_simple.yaml", "../test_skin")
+    conv_to_project("CRs_simple_skin_1.6/CR_simple.yaml", "test_skin")
 
 """
 if __name__ == '__main__':
