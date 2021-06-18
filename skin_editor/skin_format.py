@@ -63,7 +63,8 @@ class Skin:
             },
 
             "paths": {
-                "dir_resource": self.dir_resource
+                "dir_resource": self.dir_resource,
+                "path_resources": self.path_resources
             },
 
             "skin_data": {

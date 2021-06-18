@@ -29,8 +29,7 @@ def resource_path(path: str, target: str, state: str, frame: int = 0):
     obj = {
         "path": path,
         "target": target,
-        "state": state,
-        "frame": frame
+        "state": state
     }
 
     if not frame == 0:
@@ -88,14 +87,6 @@ def conv_to_project(yaml_path: str, save_path: str):
     mkdir("%s/%s" % (save_path, project_name))
     mkdir("%s/%s/Resources" % (save_path, project_name))
 
-    # More data and data to Json
-    yaml_project.dir_resource = "./Resources"
-    # skin_json = yaml_project.export_json()
-    skin_json = "wait...."
-
-    # Make format file
-    new_file("%s/%s/format.json" % (save_path, project_name), skin_json)
-
     # Unzip Resource
     res_zip_path = yaml_file.file_path + yaml_project.resource + ".zip"
     resource_unzip(res_zip_path, "%s/%s/Resources" % (save_path, project_name))
@@ -116,34 +107,34 @@ def conv_to_project(yaml_path: str, save_path: str):
             path_in_project = "%s/%s" % (dir_name, file_name)
 
             if dir_name == "Pause":
-                yaml_project.path_resources.insert(
+                yaml_project.path_resources.append(
                     resource_path(path_in_project, "pause", file_name_wo_extn)
                 )
             else:
                 file_name_split = file_name_wo_extn.split(" ")
 
                 if file_name_split[0] == "JM":
-                    yaml_project.path_resources.insert(
+                    yaml_project.path_resources.append(
                         resource_path(path_in_project,
                                       "accurate_margin_num", file_name_split[1])
                     )
                 elif file_name_split[0] == "HC":
-                    yaml_project.path_resources.insert(
+                    yaml_project.path_resources.append(
                         resource_path(path_in_project,
                                       "max_combo_num", file_name_split[1])
                     )
                 elif file_name_split[0] == "IS":
-                    yaml_project.path_resources.insert(
+                    yaml_project.path_resources.append(
                         resource_path(path_in_project,
                                       "stroke_per_sec_num", file_name_split[1])
                     )
                 elif file_name_split[0] == "A":
-                    yaml_project.path_resources.insert(
+                    yaml_project.path_resources.append(
                         resource_path(path_in_project,
                                       "music_speed", file_name_split[1])
                     )
                 elif file_name_split[0] == "B":
-                    yaml_project.path_resources.insert(
+                    yaml_project.path_resources.append(
                         resource_path(path_in_project,
                                       "bpm_num", file_name_split[1])
                     )
@@ -153,21 +144,28 @@ def conv_to_project(yaml_path: str, save_path: str):
                     except IndexError:
                         frame_num = None
                     if frame_num:
-                        yaml_project.path_resources.insert(
+                        yaml_project.path_resources.append(
                             resource_path(path_in_project,
                                           "combo_num", file_name_split[1],
                                           frame=frame_num)
                         )
                     else:
-                        yaml_project.path_resources.insert(
+                        yaml_project.path_resources.append(
                             resource_path(path_in_project,
                                           "combo_num", file_name_split[1])
                         )
                 elif file_name_split[0] == "H":
-                    yaml_project.path_resources.insert(
+                    yaml_project.path_resources.append(
                         resource_path(path_in_project,
                                       "life_num", file_name_split[1])
                     )
+
+    # More data and data to Json
+    yaml_project.dir_resource = "./Resources"
+    skin_json = yaml_project.export_json()
+
+    # Make format file
+    new_file("%s/%s/format.json" % (save_path, project_name), skin_json)
 
 
 # For test
