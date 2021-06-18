@@ -137,6 +137,37 @@ def conv_to_project(yaml_path: str, save_path: str):
                         resource_path(path_in_project,
                                       "stroke_per_sec_num", file_name_split[1])
                     )
+                elif file_name_split[0] == "A":
+                    yaml_project.path_resources.insert(
+                        resource_path(path_in_project,
+                                      "music_speed", file_name_split[1])
+                    )
+                elif file_name_split[0] == "B":
+                    yaml_project.path_resources.insert(
+                        resource_path(path_in_project,
+                                      "bpm_num", file_name_split[1])
+                    )
+                elif file_name_split[0] == "C":
+                    try:
+                        frame_num = int(file_name_split[2])
+                    except IndexError:
+                        frame_num = None
+                    if frame_num:
+                        yaml_project.path_resources.insert(
+                            resource_path(path_in_project,
+                                          "combo_num", file_name_split[1],
+                                          frame=frame_num)
+                        )
+                    else:
+                        yaml_project.path_resources.insert(
+                            resource_path(path_in_project,
+                                          "combo_num", file_name_split[1])
+                        )
+                elif file_name_split[0] == "H":
+                    yaml_project.path_resources.insert(
+                        resource_path(path_in_project,
+                                      "life_num", file_name_split[1])
+                    )
 
 
 # For test
