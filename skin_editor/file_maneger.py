@@ -159,6 +159,17 @@ def conv_to_project(yaml_path: str, save_path: str):
                         resource_path(path_in_project,
                                       "life_num", file_name_split[1])
                     )
+                elif file_name_split[0] == "I":
+                    if frame_num != 0:
+                        obj_status = "idle"
+                        frame_num = 1
+                    else:
+                        obj_status = "active"
+                    yaml_project.path_resources.append(
+                        resource_path(path_in_project,
+                                      "key_input", obj_status +
+                                      "_" + file_name_split[1],
+                                      frame=frame_num))
 
     # More data and data to Json
     yaml_project.dir_resource = "./Resources"
