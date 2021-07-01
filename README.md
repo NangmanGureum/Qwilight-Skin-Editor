@@ -16,3 +16,8 @@ This is WYSIWYG skin editor for Qwilight
 - Make lua loader
 - Reform the format and file loader
 - Write Test Code
+
+### In Process...
+
+- Convert skin to project (file_maneger.py)
+- - Skin resources to project resources
