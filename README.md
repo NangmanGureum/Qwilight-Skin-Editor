@@ -8,3 +8,7 @@ This is WYSIWYG skin editor for Qwilight
 - Intuitive playing/result UI editing
 - Animation management by resources
 - Skin preview
+
+### What is .qwsk file?
+
+It's the project format for this editor, It based on JSON.
