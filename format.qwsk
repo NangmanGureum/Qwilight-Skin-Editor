@@ -1,0 +1,50 @@
+{
+    "metadata": {
+        "title": "* This is the title of the skin",
+        "description": "* This is the description of the skin",
+        "author": "* This is the author of the skin",
+        "first_date": {
+            "year": 2021,
+            "month": 8,
+            "day": 1,
+            "__descript_this":"This is the date when make this project"
+        },
+        "recent_date": {
+            "year": 2022,
+            "month": 4,
+            "day": 17,
+            "__descript_this":"This is the date when recently edit this project"
+        },
+        "yaml_name": "* This is a name when to use for yaml file name"
+    },
+    "paths": {
+        "resource_dir": "* This is a path of the resource directory. In usealy, './resource' "
+    },
+    "contents": {
+        "reference_size": {
+            "width": 1280,
+            "height": 720,
+            "__descript_this":"This is an reference resolution for this skin"
+        },
+        "framerate": {
+            "main": 60,
+            "specific": [
+                {
+                    "object": "* This is a name of the object which to specifies the framerate",
+                    "framerate": 30
+                }
+            ],
+            "__descript_this":"This is a main framerate and some specific framerates. the specific framerate is must to be divisor or multiple of main framerate"
+        },
+        "frame": [
+            {
+                "object": "* This is a name of the object which of framelist",
+                "framelist": [
+                    "* This is a frame for the object; which is the file path of this frame",
+                    "",
+                    "* The blank part means repeat a previous frame"
+                ]
+            }
+        ]
+    }
+}
