@@ -1,5 +1,5 @@
 from os import mkdir
-from skin_editor.project_manager.make_dir_file import write_file, path_os
+from skin_editor.project_manager.make_dir_file import load_file_utf8, write_file, path_os
 
 
 def new_project(path: str, name: str):
@@ -15,6 +15,8 @@ def save_project(project_path: str, file_name: str):
     if file_name.endswith(".qwsk"):
         file_name = file_name.replace(".qwsk", "")
     data = ""
-    res_list = ""
     write_file(project_path, file_name, "qwsk", data)
-    write_file(project_path, "res", "qwsr", res_list)
+
+
+def load_project(file_path: str):
+    data = load_file_utf8(file_path)

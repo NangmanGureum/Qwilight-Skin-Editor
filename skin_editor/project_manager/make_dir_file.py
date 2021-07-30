@@ -31,5 +31,6 @@ def write_file(path: str, name: str, f_ext: str, data):
         file.close()
 
 
-def load_file():
-    print("asdf")
+def load_file_utf8(file_path: str) -> str:
+    file = open(file_path, 'r', encoding='utf-8')
+    return file.read()
