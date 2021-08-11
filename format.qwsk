@@ -39,6 +39,7 @@
         "frame": [
             {
                 "object": "* This is a name of the object which of framelist",
+                "type": "",
                 "framelist": [
                     "* This is a frame for the object; which is the file path of this frame",
                     "",
